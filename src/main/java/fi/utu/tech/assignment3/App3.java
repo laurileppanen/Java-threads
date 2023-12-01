@@ -11,6 +11,41 @@ import fi.utu.tech.common.SubmissionGenerator.Strategy;
 public class App3 {
     public static void main( String[] args )
     {
-        // Kopioi edellisen tehtävän ratkaisu tähän lähtökohdaksi
+    	// Otetaan funktion aloitusaika talteen suoritusajan laskemista varten
+        long startTime = System.currentTimeMillis();
+
+        // Generoidaan kasa esimerkkitehtäväpalautuksia
+        List<Submission> ungradedSubmissions = SubmissionGenerator.generateSubmissions(21, 200, Strategy.STATIC);
+
+        // Tulostetaan tiedot esimerkkipalautuksista ennen arviointia
+        for (var ug : ungradedSubmissions) {
+            System.out.println(ug);
+        }
+
+        // Luodaan uusi arviointitehtävä
+        GradingTask gradingTask = new GradingTask(ungradedSubmissions);
+        
+        Thread gradingThread = new Thread(gradingTask);
+        
+        gradingThread.start();
+        
+        try {
+        	gradingThread.join();
+        } catch (InterruptedException e) {
+        	e.printStackTrace();
+        }
+        
+        List<Submission> gradedSubmissions =  gradingTask.getGradedSubmissions();
+        
+        
+        // Tulostetaan arvioidut palautukset
+        System.out.println("------------ CUT HERE ------------");
+        for (var gs : gradedSubmissions) {
+            System.out.println(gs);
+        }
+
+        // Lasketaan funktion suoritusaika
+        System.out.printf("Total time for grading: %d ms%n", System.currentTimeMillis()-startTime);
     }
 }
+

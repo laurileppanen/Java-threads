@@ -1,36 +1,48 @@
 package fi.utu.tech.common;
 
 import java.util.List;
-
-/**
- * You need to modify this file
- */
+import java.util.ArrayList;
 
 
 public class TaskAllocator {
 
-    /**
-     * Allocator that creates list of two (2) GradingTask objects with each having half of the given submissions
-     * @param submissions The submissions to be allocated
-     * @return The two GradingTask objects in a list, each having half of the submissions
-     */
     public static List<GradingTask> sloppyAllocator(List<Submission> submissions) {
-        // TODO: Tehtävä 4
-        // Retruns null for now to suppress warnings
-        return null;
+        List<Submission> firstHalf = new ArrayList<>();
+        List<Submission> secondHalf = new ArrayList<>();
+        
+        for (int i=0; i<submissions.size()/2; i++) {
+        	firstHalf.add(submissions.get(i));
+        }
+        
+        for (int i=submissions.size()/2; i<submissions.size(); i++) {
+        	secondHalf.add(submissions.get(i));
+        }
+        
+        List<GradingTask> gt = new ArrayList<>();
+        gt.add(new GradingTask(firstHalf));
+        gt.add(new GradingTask(secondHalf));
+        
+        return gt;
     }
 
 
-    
-    /**
-     * Allocate List of ungraded submissions to tasks
-     * @param submissions List of submissions to be graded
-     * @param taskCount Amount of tasks to be generated out of the given submissions
-     * @return List of GradingTasks allocated with some amount of submissions (depends on the implementation)
-     */
+    private static List<GradingTask> roundRobin(List<Submission> submissions, int taskCount) {
+        List<GradingTask> gradingTasks = new ArrayList<>();
+        List<List<Submission>> groups = new ArrayList<>();
+        for (int i = 0; i < taskCount; i++) {
+            groups.add(new ArrayList<>());
+        }
+        for (var s : submissions) {
+            var i = submissions.indexOf(s) % taskCount;
+            groups.get(i).add(s);
+        }
+        for (var g : groups) {
+            gradingTasks.add(new GradingTask(g));
+        }
+        return gradingTasks;
+    }
+
     public static List<GradingTask> allocate(List<Submission> submissions, int taskCount) {
-        // TODO: Tehtävä 5
-        // Retruns null for now to suppress warnings
-        return null;
+        return roundRobin(submissions, taskCount);
     }
 }
